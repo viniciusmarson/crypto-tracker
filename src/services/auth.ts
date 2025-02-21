@@ -4,7 +4,7 @@ type User = {
 }
 
 export class AuthService {
-  public async login(email: string, password: string): Promise<void> {
+  public login(email: string, password: string): void {
     const users = JSON.parse(localStorage.getItem('users') || '[]')
     const user = users.find((user: User) => user.email === email && user.password === password)
     if (!user) {
@@ -13,13 +13,15 @@ export class AuthService {
 
     const token = crypto.randomUUID()
     localStorage.setItem('userToken', token)
+    localStorage.setItem('userInfo', JSON.stringify(user))
   }
 
-  public async logout(): Promise<void> {
+  public logout(): void {
     localStorage.removeItem('userToken')
+    localStorage.removeItem('userInfo')
   }
 
-  public async register(email: string, password: string): Promise<void> {
+  public register(email: string, password: string): void {
     const users = JSON.parse(localStorage.getItem('users') || '[]')
     const user = users.find((user: User) => user.email === email && user.password === password)
     if (user) {
@@ -32,6 +34,11 @@ export class AuthService {
     })
 
     localStorage.setItem('users', JSON.stringify(users))
+  }
+
+  public getUserInfo(): User {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    return userInfo
   }
 }
 

@@ -1,8 +1,9 @@
 <script lang="ts">
 import axios from 'axios'
-import { ref, watch, onMounted } from 'vue'
 import { LineChart } from 'vue-chart-3'
+import { ref, watch, onMounted } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import { useCryptoStore } from '@/stores/crypto'
 
 // Register Chart.js components
 Chart.register(...registerables)
@@ -32,14 +33,17 @@ export default {
 
       try {
         const response = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/${props.coinId}/market_chart?vs_currency=usd&days=7`,
+          `https://api.coingecko.com/api/v3/coins/${props.coinId}/market_chart?vs_currency=usd&days=1`,
         )
 
         const data = response.data
 
+        const cryptoStore = useCryptoStore()
+
         // Extract timestamps and prices
-        const labels = data.prices.map((entry) => new Date(entry[0]).toLocaleDateString())
+        const labels = data.prices.map((entry) => new Date(entry[0]).toLocaleTimeString())
         const prices = data.prices.map((entry) => entry[1])
+        cryptoStore.lastPrices = prices
 
         // Set chart data
         chartData.value = {

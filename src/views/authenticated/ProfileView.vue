@@ -1,7 +1,23 @@
-<script setup lang="ts"></script>
+<script lang="ts">
+import { authService } from '@/services/auth'
+import ProfileComponent from '@/components/Profile.vue'
+
+export default {
+  setup() {
+    const userInfo = authService.getUserInfo()
+    console.log(userInfo)
+    return {
+      userInfo,
+    }
+  },
+  components: {
+    ProfileComponent,
+  },
+}
+</script>
 
 <template>
-  <main>
-    <h1>This is an profile page</h1>
+  <main class="flex mt-10 justify-center h-screen">
+    <ProfileComponent :name="userInfo.name" :email="userInfo.email" />
   </main>
 </template>

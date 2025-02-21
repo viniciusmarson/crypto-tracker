@@ -1,6 +1,7 @@
 <script lang="ts">
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
+import CryptoGPT from '@/components/CryptoGPT.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
 
@@ -39,7 +40,7 @@ export default {
       selectCoin,
     }
   },
-  components: { CryptoChart, CryptoNews },
+  components: { CryptoChart, CryptoNews, CryptoGPT },
 }
 </script>
 
@@ -49,7 +50,7 @@ export default {
       <div
         v-for="coin in coins"
         :key="coin.id"
-        class="flex items-center justify-between py-2 gap-12"
+        class="flex items-center justify-between py-2 gap-12 hover:bg-gray-800 rounded-lg cursor-pointer"
         @click="selectCoin(coin)"
       >
         <div class="flex items-center space-x-2">
@@ -64,8 +65,9 @@ export default {
 
     <div class="flex flex-col gap-4">
       <CryptoChart v-if="selectedCoin" :coinId="selectedCoin.id" :coinName="selectedCoin.name" />
-
       <CryptoNews v-if="selectedCoin" :coinName="selectedCoin.name" />
     </div>
+
+    <CryptoGPT v-if="selectedCoin" />
   </div>
 </template>

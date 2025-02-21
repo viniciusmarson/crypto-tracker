@@ -1,6 +1,7 @@
 <script lang="ts">
-import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
+import { ref, watch, onMounted } from 'vue'
+import { useCryptoStore } from '@/stores/crypto'
 
 export default {
   props: {
@@ -10,6 +11,8 @@ export default {
     const news = ref([])
     const error = ref(null)
     const loading = ref(false)
+
+    const cryptoStore = useCryptoStore()
 
     const API_KEY = 'pub_7098760315abb2ba18da32d1cdc3e694d2a31' // Replace with your actual API key
 
@@ -28,6 +31,8 @@ export default {
         })
 
         news.value = response.data.results || []
+
+        cryptoStore.lastNews = news.value.map((article) => article.title)
       } catch (err) {
         console.error(err)
         error.value = 'Failed to fetch news. Try again later.'

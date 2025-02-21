@@ -1,2 +1,7 @@
 @import 'tailwindcss';
 @import './base.css';
+
+body {
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+}

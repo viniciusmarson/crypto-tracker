@@ -1,9 +1,12 @@
 <script lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { authService } from '@/services/auth'
 
 export default {
   name: 'App-Header',
   setup() {
+    const router = useRouter()
     const menuOpen = ref(false)
 
     const toggleMenu = () => {
@@ -14,7 +17,12 @@ export default {
       menuOpen.value = false
     }
 
-    return { menuOpen, toggleMenu, closeMenu }
+    const logout = async () => {
+      await authService.logout()
+      router.push('/login')
+    }
+
+    return { menuOpen, toggleMenu, closeMenu, logout }
   },
 }
 </script>
@@ -23,9 +31,12 @@ export default {
   <header>
     <div class="container mx-auto flex justify-between items-center p-4">
       <!-- Logo -->
-      <h1 class="text-2xl font-bold">
-        <RouterLink to="/">Crypto Tracker</RouterLink>
-      </h1>
+      <div class="flex items-center gap-2">
+        <img class="h-10 w-auto" src="../assets/crypto.png" alt="Crypto Tracker" />
+        <h1 class="text-2xl font-bold">
+          <RouterLink to="/">Crypto Tracker</RouterLink>
+        </h1>
+      </div>
 
       <!-- Mobile Menu Button -->
       <button @click="toggleMenu" class="md:hidden focus:outline-none">
@@ -70,13 +81,13 @@ export default {
             </RouterLink>
           </li>
           <li>
-            <RouterLink
-              to="/logout"
+            <a
+              href="#"
               class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
-              @click="closeMenu"
+              @click="logout"
             >
               Logout
-            </RouterLink>
+            </a>
           </li>
         </ul>
       </nav>
