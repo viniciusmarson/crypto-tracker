@@ -73,6 +73,15 @@ export default {
           </li>
           <li>
             <RouterLink
+              to="/wallet"
+              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
+              @click="closeMenu"
+            >
+              Wallet
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink
               to="/profile"
               class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
               @click="closeMenu"
@@ -83,7 +92,7 @@ export default {
           <li>
             <a
               href="#"
-              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
+              class="block px-4 py-2 md:px-0 text-red-400 hover:bg-blue-700 md:hover:bg-transparent"
               @click="logout"
             >
               Logout

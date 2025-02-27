@@ -5,7 +5,6 @@ import ProfileComponent from '@/components/Profile.vue'
 export default {
   setup() {
     const userInfo = authService.getUserInfo()
-    console.log(userInfo)
     return {
       userInfo,
     }

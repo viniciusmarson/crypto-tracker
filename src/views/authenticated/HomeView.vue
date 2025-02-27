@@ -7,6 +7,7 @@ import { useCryptoStore } from '@/stores/crypto'
 import CryptoGPT from '@/components/CryptoGPT.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
+import { useRoute } from 'vue-router'
 
 export default {
   setup() {
@@ -41,9 +42,20 @@ export default {
       }
     }
 
+    const route = useRoute()
+
     onMounted(() => {
       fetchCryptoPricesToday()
       setInterval(fetchCryptoPricesToday, 3600000) // Fetch every 1 minute
+    })
+
+    watch(coins, () => {
+      if (route.query.coin) {
+        const coin = coins.value.find((coin) => coin.id === route.query.coin)
+        if (coin) {
+          selectedCoin.value = coin
+        }
+      }
     })
 
     const selectCoin = (coin: Coin) => {

@@ -4,6 +4,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import HomeView from '@/views/authenticated/HomeView.vue'
+import WalletView from '@/views/authenticated/WalletView.vue'
 import ProfileView from '@/views/authenticated/ProfileView.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
@@ -39,6 +40,10 @@ const router = createRouter({
         {
           path: '/',
           component: HomeView,
+        },
+        {
+          path: '/wallet',
+          component: WalletView,
         },
         {
           path: '/profile',
