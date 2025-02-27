@@ -1,9 +1,7 @@
 <script lang="ts">
-import axios from 'axios'
 import { LineChart } from 'vue-chart-3'
-import { ref, watch, onMounted } from 'vue'
-import { Chart, registerables } from 'chart.js'
-import { useCryptoStore } from '@/stores/crypto'
+import { Chart, registerables, type ChartData, type Point } from 'chart.js'
+import { ref, watch, onMounted, type PropType } from 'vue'
 
 // Register Chart.js components
 Chart.register(...registerables)
@@ -11,11 +9,14 @@ Chart.register(...registerables)
 export default {
   components: { LineChart },
   props: {
-    coinId: { type: String, required: true }, // Accepts coin ID (e.g., 'bitcoin', 'ethereum')
-    coinName: { type: String, required: true },
+    data: { type: Array as PropType<number[][]>, required: true },
   },
   setup(props) {
-    const chartData = ref(null)
+    const loading = ref(false)
+    const error = ref<string | null>(null)
+
+    const chartData = ref<ChartData<'line', (number | Point | null)[], unknown> | null>(null)
+
     const chartOptions = ref({
       responsive: true,
       maintainAspectRatio: false,
@@ -24,26 +25,14 @@ export default {
       },
     })
 
-    const error = ref(null)
-    const loading = ref(false)
-
     const fetchPriceHistory = async () => {
       loading.value = true
       error.value = null
 
       try {
-        const response = await axios.get(
-          `https://api.coingecko.com/api/v3/coins/${props.coinId}/market_chart?vs_currency=usd&days=1`,
-        )
-
-        const data = response.data
-
-        const cryptoStore = useCryptoStore()
-
         // Extract timestamps and prices
-        const labels = data.prices.map((entry) => new Date(entry[0]).toLocaleTimeString())
-        const prices = data.prices.map((entry) => entry[1])
-        cryptoStore.lastPrices = prices
+        const labels = props.data.map((entry) => new Date(entry[0]).toLocaleTimeString())
+        const prices = props.data.map((entry) => entry[1])
 
         // Set chart data
         chartData.value = {
@@ -70,7 +59,7 @@ export default {
     onMounted(fetchPriceHistory)
 
     // Watch for changes in props.coinId and refetch data
-    watch(() => props.coinId, fetchPriceHistory)
+    watch(() => props.data, fetchPriceHistory)
 
     return { chartData, chartOptions, loading, error }
   },
@@ -79,11 +68,8 @@ export default {
 
 <template>
   <div class="p-6">
-    <h2 class="text-xl font-bold text-center mb-4">Price History of {{ coinName }}</h2>
+    <h2 class="text-xl font-bold text-center mb-4">Price History</h2>
 
     <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
-
-    <p v-if="loading" class="text-center text-gray-400">Loading chart...</p>
-    <p v-if="error" class="text-center text-red-500">{{ error }}</p>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import gptService from '@/services/gpt'
 import { useCryptoStore } from '@/stores/crypto'
 
 export default {
@@ -8,15 +8,12 @@ export default {
     const userQuestion = ref('')
     const response = ref('')
     const loading = ref(false)
-    const error = ref(null)
+    const error = ref<string | null>(null)
 
     const cryptoStore = useCryptoStore()
 
     const gptData = `Last news: ${cryptoStore.lastNews.join(', ')}\nLast prices: ${cryptoStore.lastPrices.join(', ')}`
     console.log(gptData)
-
-    const API_KEY =
-      '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' // Replace with your OpenAI API key
 
     const askGPT = async () => {
       if (!userQuestion.value.trim()) {
@@ -29,25 +26,7 @@ export default {
       response.value = ''
 
       try {
-        const res = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-4o',
-            messages: [
-              { role: 'system', content: 'You are an AI assistant helping with data analysis.' },
-              {
-                role: 'user',
-                content: `Here is the data on the screen:\n${gptData}\n\nUser question: ${userQuestion.value}`,
-              },
-            ],
-            max_tokens: 200,
-          },
-          {
-            headers: { Authorization: `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
-          },
-        )
-
-        response.value = res.data.choices[0].message.content
+        response.value = await gptService.getGPTResponse(gptData, userQuestion.value)
       } catch (err) {
         console.log(err)
         error.value = 'Failed to get a response. Please try again.'

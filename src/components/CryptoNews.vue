@@ -1,67 +1,23 @@
 <script lang="ts">
-import axios from 'axios'
-import { ref, watch, onMounted } from 'vue'
-import { useCryptoStore } from '@/stores/crypto'
-
+import { type PropType } from 'vue'
+import type { New } from '@/types/new'
 export default {
   props: {
-    coinName: { type: String, required: true }, // e.g., 'Bitcoin'
+    news: { type: Array as PropType<New[]>, required: true }, // e.g., 'Bitcoin'
   },
-  setup(props) {
-    const news = ref([])
-    const error = ref(null)
-    const loading = ref(false)
-
-    const cryptoStore = useCryptoStore()
-
-    const API_KEY = 'pub_7098760315abb2ba18da32d1cdc3e694d2a31' // Replace with your actual API key
-
-    const fetchNews = async () => {
-      loading.value = true
-      error.value = null
-
-      try {
-        const response = await axios.get('https://newsdata.io/api/1/news', {
-          params: {
-            apikey: API_KEY,
-            q: props.coinName, // Filter news by the coin name
-            language: 'en',
-            category: 'business',
-          },
-        })
-
-        news.value = response.data.results || []
-
-        cryptoStore.lastNews = news.value.map((article) => article.title)
-      } catch (err) {
-        console.error(err)
-        error.value = 'Failed to fetch news. Try again later.'
-      } finally {
-        loading.value = false
-      }
-    }
-
-    const formatDate = (dateString) => {
+  setup() {
+    const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleDateString()
     }
 
-    // Fetch news when the component is mounted
-    onMounted(fetchNews)
-
-    // Watch for prop changes (if the selected coin changes, fetch news again)
-    watch(() => props.coinName, fetchNews)
-
-    return { news, loading, error, formatDate }
+    return { formatDate }
   },
 }
 </script>
 
 <template>
   <div class="max-w-2xl mx-auto p-6">
-    <h2 class="text-xl font-bold text-center mb-4">Latest News for {{ coinName }}</h2>
-
-    <div v-if="loading" class="text-center text-gray-400">Loading news...</div>
-    <p v-if="error" class="text-center text-red-500">{{ error }}</p>
+    <h2 class="text-xl font-bold text-center mb-4">Latest News</h2>
 
     <ul v-if="news.length" class="space-y-4">
       <li
@@ -82,6 +38,6 @@ export default {
       </li>
     </ul>
 
-    <p v-else class="text-center text-gray-500">No news available for {{ coinName }}.</p>
+    <p v-else class="text-center text-gray-500">No news available.</p>
   </div>
 </template>

@@ -1,43 +1,90 @@
 <script lang="ts">
-import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import type { New } from '@/types/new'
+import type { Coin } from '@/types/coin'
+import { ref, onMounted, watch } from 'vue'
+import cryptoService from '@/services/crypto'
+import { useCryptoStore } from '@/stores/crypto'
 import CryptoGPT from '@/components/CryptoGPT.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
 
 export default {
   setup() {
-    const coins = ref([])
-    const lastUpdated = ref('')
-    const selectedCoin = ref(null)
+    // Handle screen loading and error messages
+    const loading = ref(false)
+    const error = ref<string | null>(null)
 
-    const fetchCryptoPrices = async () => {
+    // Handle the data for the chart, news and gpt
+    const lastUpdated = ref('')
+    const coins = ref<Coin[]>([])
+    const news = ref<New[] | null>(null)
+    const priceHistory = ref<number[][] | null>(null)
+
+    // Handle the selected coin
+    const selectedCoin = ref<Coin | null>(null)
+
+    // Handle the crypto store
+    const cryptoStore = useCryptoStore()
+
+    // Fetch the crypto prices today
+    const fetchCryptoPricesToday = async () => {
       try {
-        const response = await axios.get(
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
-        )
-        const data = response.data
-        coins.value = data
+        loading.value = true
+        coins.value = await cryptoService.getCryptoData()
         lastUpdated.value = new Date().toLocaleTimeString()
-      } catch (error) {
-        console.error('Error fetching cryptocurrency prices:', error)
+        error.value = null
+      } catch (err) {
+        error.value = 'Failed to fetch data. Please try again.'
+        console.error('Error fetching cryptocurrency prices:', err)
+      } finally {
+        loading.value = false
       }
     }
 
     onMounted(() => {
-      fetchCryptoPrices()
-      setInterval(fetchCryptoPrices, 3600000) // Fetch every 1 minute
+      fetchCryptoPricesToday()
+      setInterval(fetchCryptoPricesToday, 3600000) // Fetch every 1 minute
     })
 
-    const selectCoin = (coin) => {
+    const selectCoin = (coin: Coin) => {
       selectedCoin.value = coin
     }
 
+    // Watch the selected coin and fetch the data for the chart, news and gpt
+    watch(selectedCoin, async (newCoin) => {
+      if (newCoin) {
+        try {
+          loading.value = true
+
+          const [priceHistoryResponse, newsResponse] = await Promise.all([
+            cryptoService.getCryptoPriceHistory(newCoin.id),
+            cryptoService.getCryptoNews(newCoin.name),
+          ])
+
+          priceHistory.value = priceHistoryResponse
+          news.value = newsResponse
+
+          cryptoStore.lastPrices = priceHistoryResponse.map((entry) => entry[1])
+          cryptoStore.lastNews = newsResponse.map((article) => article.title)
+          error.value = null
+        } catch (err) {
+          error.value = 'Failed to fetch data. Please try again.'
+          console.error('Error fetching cryptocurrency prices:', err)
+        } finally {
+          loading.value = false
+        }
+      }
+    })
+
     return {
+      news,
       coins,
+      priceHistory,
       lastUpdated,
       selectedCoin,
       selectCoin,
+      loading,
+      error,
     }
   },
   components: { CryptoChart, CryptoNews, CryptoGPT },
@@ -45,6 +92,9 @@ export default {
 </script>
 
 <template>
+  <p v-if="loading" class="text-center text-gray-400">Loading data...</p>
+  <p v-if="error" class="text-center text-red-500">{{ error }}</p>
+
   <div class="flex flex-col p-10 justify-center gap-2 md:flex-row">
     <div class="flex flex-col p-6 gap-4">
       <div
@@ -63,11 +113,11 @@ export default {
       <p class="text-gray-400 text-sm text-center mt-2">Last updated: {{ lastUpdated }}</p>
     </div>
 
-    <div class="flex flex-col gap-4">
-      <CryptoChart v-if="selectedCoin" :coinId="selectedCoin.id" :coinName="selectedCoin.name" />
-      <CryptoNews v-if="selectedCoin" :coinName="selectedCoin.name" />
+    <div v-if="selectedCoin" class="flex flex-col gap-4">
+      <CryptoChart v-if="priceHistory" :data="priceHistory" />
+      <CryptoNews v-if="news" :news="news" />
     </div>
 
-    <CryptoGPT v-if="selectedCoin" />
+    <CryptoGPT v-if="selectedCoin && priceHistory && news" />
   </div>
 </template>

@@ -1,7 +1,4 @@
-type User = {
-  email: string
-  password: string
-}
+import type { User } from '@/types/user'
 
 export class AuthService {
   public login(email: string, password: string): void {
