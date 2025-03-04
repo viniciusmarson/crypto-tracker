@@ -1,13 +1,14 @@
 <script lang="ts">
+import { useRoute } from 'vue-router'
 import type { New } from '@/types/new'
 import type { Coin } from '@/types/coin'
 import { ref, onMounted, watch } from 'vue'
 import cryptoService from '@/services/crypto'
 import { useCryptoStore } from '@/stores/crypto'
 import CryptoGPT from '@/components/CryptoGPT.vue'
+import CryptoList from '@/components/CryptoList.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
-import { useRoute } from 'vue-router'
 
 export default {
   setup() {
@@ -99,7 +100,7 @@ export default {
       error,
     }
   },
-  components: { CryptoChart, CryptoNews, CryptoGPT },
+  components: { CryptoList, CryptoChart, CryptoNews, CryptoGPT },
 }
 </script>
 
@@ -108,24 +109,7 @@ export default {
   <p v-if="error" class="text-center text-red-500">{{ error }}</p>
 
   <div class="flex flex-col p-10 justify-center gap-2 md:flex-row">
-    <div class="flex flex-col p-6 gap-4">
-      <div
-        v-for="coin in coins"
-        :key="coin.id"
-        class="flex items-center justify-between py-2 gap-12 hover:bg-gray-800 rounded-lg cursor-pointer"
-        @click="selectCoin(coin)"
-      >
-        <div class="flex items-center space-x-2">
-          <img :src="coin.image" alt="coin symbol" class="h-6 w-6" />
-          <p class="text-lg font-semibold" :id="coin.id">
-            {{ coin.name }} ({{ coin.symbol.toUpperCase() }})
-          </p>
-        </div>
-        <p class="text-lg font-semibold">${{ coin.current_price.toLocaleString() }}</p>
-      </div>
-
-      <p class="text-gray-400 text-sm text-center mt-2">Last updated: {{ lastUpdated }}</p>
-    </div>
+    <CryptoList :coins="coins" :selectCoin="selectCoin" />
 
     <div v-if="selectedCoin" class="flex flex-col gap-4">
       <CryptoChart v-if="priceHistory" :data="priceHistory" />
