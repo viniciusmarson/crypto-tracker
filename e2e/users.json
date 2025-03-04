@@ -1,0 +1,13 @@
+{
+  "origins": [
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "users",
+          "value": "[{\"email\":\"vinicius.marson@icloud.com\",\"password\":\"test\"}]"
+        }
+      ]
+    }
+  ]
+}

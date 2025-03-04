@@ -91,6 +91,7 @@ export default {
           </li>
           <li>
             <a
+              id="logout-button"
               href="#"
               class="block px-4 py-2 md:px-0 text-red-400 hover:bg-blue-700 md:hover:bg-transparent"
               @click="logout"

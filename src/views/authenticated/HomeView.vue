@@ -117,7 +117,9 @@ export default {
       >
         <div class="flex items-center space-x-2">
           <img :src="coin.image" alt="coin symbol" class="h-6 w-6" />
-          <p class="text-lg font-semibold">{{ coin.name }} ({{ coin.symbol.toUpperCase() }})</p>
+          <p class="text-lg font-semibold" :id="coin.id">
+            {{ coin.name }} ({{ coin.symbol.toUpperCase() }})
+          </p>
         </div>
         <p class="text-lg font-semibold">${{ coin.current_price.toLocaleString() }}</p>
       </div>
