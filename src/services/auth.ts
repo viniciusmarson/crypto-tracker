@@ -18,13 +18,14 @@ export class AuthService {
     localStorage.removeItem('userInfo')
   }
 
-  public register(email: string, password: string): void {
+  public register({ email, password }: User): void {
     const users = JSON.parse(localStorage.getItem('users') || '[]')
     const user = users.find((user: User) => user.email === email && user.password === password)
     if (user) {
       throw new Error('User already exists')
     }
 
+    // TODO: Alex - Add the rest of the fields
     users.push({
       email,
       password,

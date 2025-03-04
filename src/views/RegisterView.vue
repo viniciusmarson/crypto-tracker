@@ -5,6 +5,7 @@ import { authService } from '@/services/auth'
 export default {
   data() {
     return {
+      // TODO: Alex - Add the rest of the fields
       formData: {
         email: '',
         password: '',
@@ -19,7 +20,16 @@ export default {
       }
 
       try {
-        await authService.register(this.formData.email, this.formData.password)
+        await authService.register({
+          email: this.formData.email,
+          password: this.formData.password,
+          // TODO: get the rest of the fields from the user
+          name: '',
+          address: '',
+          country: '',
+          phone: '',
+          currency: '',
+        })
         return this.$router.push('/login')
       } catch (error) {
         console.error(error)
@@ -100,6 +110,9 @@ export default {
             />
           </div>
         </div>
+
+        <!-- TODO: Alex - Add the rest of the fields -->
+
         <div>
           <button
             type="submit"
