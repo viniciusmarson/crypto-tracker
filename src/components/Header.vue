@@ -65,7 +65,7 @@ export default {
           <li>
             <RouterLink
               to="/"
-              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
+              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent md:hover:text-yellow-500"
               @click="closeMenu"
             >
               Home
@@ -74,7 +74,7 @@ export default {
           <li>
             <RouterLink
               to="/wallet"
-              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
+              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent md:hover:text-yellow-500"
               @click="closeMenu"
             >
               Wallet
@@ -83,7 +83,7 @@ export default {
           <li>
             <RouterLink
               to="/profile"
-              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent"
+              class="block px-4 py-2 md:px-0 hover:bg-blue-700 md:hover:bg-transparent md:hover:text-yellow-500"
               @click="closeMenu"
             >
               Profile
@@ -93,7 +93,7 @@ export default {
             <a
               id="logout-button"
               href="#"
-              class="block px-4 py-2 md:px-0 text-red-400 hover:bg-blue-700 md:hover:bg-transparent"
+              class="block px-4 py-2 md:px-0 text-red-400 hover:bg-blue-700 md:hover:bg-transparent md:hover:text-red-600"
               @click="logout"
             >
               Logout
