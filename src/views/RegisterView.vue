@@ -1,51 +1,42 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authService } from '@/services/auth'
 
-export default {
-  data() {
-    return {
-      // TODO: Alex - Add the rest of the fields
-      formData: {
-        email: '',
-        password: '',
-        confirmPassword: '',
-      },
-    }
-  },
-  methods: {
-    async handleSubmit() {
-      if (this.formData.password !== this.formData.confirmPassword) {
-        alert('Passwords not match!')
-      }
+const router = useRouter()
 
-      try {
-        await authService.register({
-          email: this.formData.email,
-          password: this.formData.password,
-          // TODO: get the rest of the fields from the user
-          name: '',
-          address: '',
-          country: '',
-          phone: '',
-          currency: '',
-        })
-        return this.$router.push('/login')
-      } catch (error) {
-        console.error(error)
-        alert('Unexpected error')
-      }
-    },
-  },
-  setup() {
-    const router = useRouter()
+if (localStorage.getItem('userToken')) {
+  router.push('/')
+}
 
-    if (localStorage.getItem('userToken')) {
-      router.push('/')
-    }
+// TODO: Alex - Add the rest of the fields
+const formData = ref({
+  email: '',
+  password: '',
+  confirmPassword: '',
+})
 
-    return {}
-  },
+const handleSubmit = async () => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    alert('Passwords not match!')
+  }
+
+  try {
+    await authService.register({
+      email: formData.value.email,
+      password: formData.value.password,
+      // TODO: get the rest of the fields from the user
+      name: '',
+      address: '',
+      country: '',
+      phone: '',
+      currency: '',
+    })
+    return router.push('/login')
+  } catch (error) {
+    console.error(error)
+    alert('Unexpected error')
+  }
 }
 </script>
 

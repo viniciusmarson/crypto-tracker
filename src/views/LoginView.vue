@@ -1,36 +1,27 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authService } from '@/services/auth'
 
-export default {
-  data() {
-    return {
-      formData: {
-        email: '',
-        password: '',
-      },
-    }
-  },
-  methods: {
-    async handleSubmit() {
-      try {
-        await authService.login(this.formData.email, this.formData.password)
-        return this.$router.push('/')
-      } catch (error) {
-        console.error(error)
-        alert('Invalid credentials')
-      }
-    },
-  },
-  setup() {
-    const router = useRouter()
+const router = useRouter()
 
-    if (localStorage.getItem('userToken')) {
-      router.push('/')
-    }
+if (localStorage.getItem('userToken')) {
+  router.push('/')
+}
 
-    return {}
-  },
+const formData = ref({
+  email: '',
+  password: '',
+})
+
+const handleSubmit = async () => {
+  try {
+    await authService.login(formData.value.email, formData.value.password)
+    return router.push('/')
+  } catch (error) {
+    console.error(error)
+    alert('Invalid credentials')
+  }
 }
 </script>
 

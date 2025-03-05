@@ -1,42 +1,36 @@
-<script lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 import gptService from '@/services/gpt'
 import { useCryptoStore } from '@/stores/crypto'
 
-export default {
-  setup() {
-    const userQuestion = ref('')
-    const response = ref('')
-    const loading = ref(false)
-    const error = ref<string | null>(null)
+const userQuestion = ref('')
+const response = ref('')
+const loading = ref(false)
+const error = ref<string | null>(null)
 
-    const cryptoStore = useCryptoStore()
+const cryptoStore = useCryptoStore()
 
-    const gptData = `Last news: ${cryptoStore.lastNews.join(', ')}\nLast prices: ${cryptoStore.lastPrices.join(', ')}`
-    console.log(gptData)
+const gptData = `Last news: ${cryptoStore.lastNews.join(', ')}\nLast prices: ${cryptoStore.lastPrices.join(', ')}`
+console.log(gptData)
 
-    const askGPT = async () => {
-      if (!userQuestion.value.trim()) {
-        error.value = 'Please enter a question.'
-        return
-      }
+const askGPT = async () => {
+  if (!userQuestion.value.trim()) {
+    error.value = 'Please enter a question.'
+    return
+  }
 
-      loading.value = true
-      error.value = null
-      response.value = ''
+  loading.value = true
+  error.value = null
+  response.value = ''
 
-      try {
-        response.value = await gptService.getGPTResponse(gptData, userQuestion.value)
-      } catch (err) {
-        console.log(err)
-        error.value = 'Failed to get a response. Please try again.'
-      } finally {
-        loading.value = false
-      }
-    }
-
-    return { userQuestion, response, askGPT, loading, error }
-  },
+  try {
+    response.value = await gptService.getGPTResponse(gptData, userQuestion.value)
+  } catch (err) {
+    console.log(err)
+    error.value = 'Failed to get a response. Please try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

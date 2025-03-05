@@ -1,13 +1,11 @@
-<script lang="ts">
+<script setup lang="ts">
 import { type PropType } from 'vue'
 import type { Coin } from '@/types/coin'
 
-export default {
-  props: {
-    coins: { type: Array as PropType<Coin[]>, required: true },
-    selectCoin: { type: Function as PropType<(coin: Coin) => void>, required: true },
-  },
-}
+defineProps({
+  coins: { type: Array as PropType<Coin[]>, required: true },
+  selectCoin: { type: Function as PropType<(coin: Coin) => void>, required: true },
+})
 </script>
 
 <template>
@@ -26,7 +24,5 @@ export default {
       </div>
       <p class="text-lg font-semibold">${{ coin.current_price.toLocaleString() }}</p>
     </div>
-
-    <p class="text-gray-400 text-sm text-center mt-2">Last updated: {{ lastUpdated }}</p>
   </div>
 </template>

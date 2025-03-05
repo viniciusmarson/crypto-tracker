@@ -1,17 +1,13 @@
-<script lang="ts">
+<script setup lang="ts">
 import { type PropType } from 'vue'
 import type { New } from '@/types/new'
-export default {
-  props: {
-    news: { type: Array as PropType<New[]>, required: true }, // e.g., 'Bitcoin'
-  },
-  setup() {
-    const formatDate = (dateString: string) => {
-      return new Date(dateString).toLocaleDateString()
-    }
 
-    return { formatDate }
-  },
+defineProps({
+  news: { type: Array as PropType<New[]>, required: true },
+})
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString()
 }
 </script>
 

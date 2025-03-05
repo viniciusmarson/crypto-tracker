@@ -1,14 +1,8 @@
-<script lang="ts">
-export default {
-  name: 'WalletView',
-
-  setup() {
-    // TODO: Mario - Call the cryptoService.getCryptoData() to retrieve the crypto data from the server (take a look at the HomeView.vue for the example)
-    // TODO: Mario - Create the logic to retrieve the user crypto data from the local storage
-    // TODO: Mario - Create a logic to save the user crypto data to the local storage
-    // TODO: Mario - Create a logic to calculate the total value of the user crypto data based on the current price of the crypto and the price of the crypto when the user added it to the wallet
-  },
-}
+<script setup lang="ts">
+// TODO: Mario - Call the cryptoService.getCryptoData() to retrieve the crypto data from the server (take a look at the HomeView.vue for the example)
+// TODO: Mario - Create the logic to retrieve the user crypto data from the local storage
+// TODO: Mario - Create a logic to save the user crypto data to the local storage
+// TODO: Mario - Create a logic to calculate the total value of the user crypto data based on the current price of the crypto and the price of the crypto when the user added it to the wallet
 </script>
 
 <template>

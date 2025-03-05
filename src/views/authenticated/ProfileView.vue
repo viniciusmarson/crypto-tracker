@@ -1,18 +1,8 @@
-<script lang="ts">
+<script setup lang="ts">
 import { authService } from '@/services/auth'
 import ProfileComponent from '@/components/Profile.vue'
 
-export default {
-  setup() {
-    const userInfo = authService.getUserInfo()
-    return {
-      userInfo,
-    }
-  },
-  components: {
-    ProfileComponent,
-  },
-}
+const userInfo = authService.getUserInfo()
 </script>
 
 <template>

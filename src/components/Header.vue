@@ -1,29 +1,22 @@
-<script lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authService } from '@/services/auth'
 
-export default {
-  name: 'App-Header',
-  setup() {
-    const router = useRouter()
-    const menuOpen = ref(false)
+const router = useRouter()
+const menuOpen = ref(false)
 
-    const toggleMenu = () => {
-      menuOpen.value = !menuOpen.value
-    }
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
+}
 
-    const closeMenu = () => {
-      menuOpen.value = false
-    }
+const closeMenu = () => {
+  menuOpen.value = false
+}
 
-    const logout = async () => {
-      await authService.logout()
-      router.push('/login')
-    }
-
-    return { menuOpen, toggleMenu, closeMenu, logout }
-  },
+const logout = async () => {
+  await authService.logout()
+  router.push('/login')
 }
 </script>
 
