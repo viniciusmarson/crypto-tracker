@@ -1,56 +1,34 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { New } from '@/types/new'
 import type { Coin } from '@/types/coin'
-import { ref, onMounted, watch } from 'vue'
 import cryptoService from '@/services/crypto'
-import { useCryptoStore } from '@/stores/crypto'
 import CryptoGPT from '@/components/CryptoGPT.vue'
 import CryptoList from '@/components/CryptoList.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
+import { useCryptoPricesStore, useCryptoTradingInfoStore } from '@/stores/crypto'
 
 // Handle screen loading and error messages
 const loading = ref(false)
 const error = ref<string | null>(null)
 
+// Handle the crypto store
+const cryptoPricesStore = useCryptoPricesStore()
+const cryptoTradingInfoStore = useCryptoTradingInfoStore()
 // Handle the data for the chart, news and gpt
-const lastUpdated = ref('')
-const coins = ref<Coin[]>([])
 const news = ref<New[] | null>(null)
 const priceHistory = ref<number[][] | null>(null)
 
 // Handle the selected coin
 const selectedCoin = ref<Coin | null>(null)
 
-// Handle the crypto store
-const cryptoStore = useCryptoStore()
-
-// Fetch the crypto prices today
-const fetchCryptoPricesToday = async () => {
-  try {
-    loading.value = true
-    coins.value = await cryptoService.getCryptoData()
-    lastUpdated.value = new Date().toLocaleTimeString()
-    error.value = null
-  } catch (err) {
-    error.value = 'Failed to fetch data. Please try again.'
-    console.error('Error fetching cryptocurrency prices:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
 const route = useRoute()
 
-onMounted(() => {
-  fetchCryptoPricesToday()
-  setInterval(fetchCryptoPricesToday, 3600000) // Fetch every 1 minute
-})
-
-watch(coins, () => {
+watch(cryptoPricesStore.currentPrices, () => {
   if (route.query.coin) {
-    const coin = coins.value.find((coin) => coin.id === route.query.coin)
+    const coin = cryptoPricesStore.currentPrices.find((coin) => coin.id === route.query.coin)
     if (coin) {
       selectedCoin.value = coin
     }
@@ -75,8 +53,8 @@ watch(selectedCoin, async (newCoin) => {
       priceHistory.value = priceHistoryResponse
       news.value = newsResponse
 
-      cryptoStore.lastPrices = priceHistoryResponse.map((entry) => entry[1])
-      cryptoStore.lastNews = newsResponse.map((article) => article.title)
+      cryptoTradingInfoStore.lastPrices = priceHistoryResponse.map((entry) => entry[1])
+      cryptoTradingInfoStore.lastNews = newsResponse.map((article) => article.title)
       error.value = null
     } catch (err) {
       error.value = 'Failed to fetch data. Please try again.'
@@ -89,11 +67,19 @@ watch(selectedCoin, async (newCoin) => {
 </script>
 
 <template>
-  <p v-if="loading" class="text-center text-gray-400">Loading data...</p>
-  <p v-if="error" class="text-center text-red-500">{{ error }}</p>
+  <p v-if="loading || cryptoPricesStore.loading" class="text-center text-gray-400">
+    Loading data...
+  </p>
+  <p v-if="error || cryptoPricesStore.error" class="text-center text-red-500">
+    {{ error || cryptoPricesStore.error }}
+  </p>
+
+  <center>
+    <p class="text-gray-400">Last updated: {{ cryptoPricesStore.lastUpdated }}</p>
+  </center>
 
   <div class="flex flex-col p-10 justify-center gap-2 md:flex-row">
-    <CryptoList :coins="coins" :selectCoin="selectCoin" />
+    <CryptoList :coins="cryptoPricesStore.currentPrices" :selectCoin="selectCoin" />
 
     <div v-if="selectedCoin" class="flex flex-col gap-4">
       <CryptoChart v-if="priceHistory" :data="priceHistory" />

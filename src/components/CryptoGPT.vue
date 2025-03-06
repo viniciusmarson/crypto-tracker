@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import gptService from '@/services/gpt'
-import { useCryptoStore } from '@/stores/crypto'
+import { useTradingStore } from '@/stores/crypto'
 
 const userQuestion = ref('')
 const response = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-const cryptoStore = useCryptoStore()
+const tradingStore = useTradingStore()
 
-const gptData = `Last news: ${cryptoStore.lastNews.join(', ')}\nLast prices: ${cryptoStore.lastPrices.join(', ')}`
+const gptData = `Last news: ${tradingStore.lastNews.join(', ')}\nLast prices: ${tradingStore.lastPrices.join(', ')}`
 console.log(gptData)
 
 const askGPT = async () => {
