@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import gptService from '@/services/gpt'
-import { useTradingStore } from '@/stores/crypto'
+import { useCryptoTradingInfoStore } from '@/stores/crypto'
 
 const userQuestion = ref('')
 const response = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-const tradingStore = useTradingStore()
-
-const gptData = `Last news: ${tradingStore.lastNews.join(', ')}\nLast prices: ${tradingStore.lastPrices.join(', ')}`
-console.log(gptData)
+const tradingStore = useCryptoTradingInfoStore()
 
 const askGPT = async () => {
   if (!userQuestion.value.trim()) {
@@ -24,6 +21,8 @@ const askGPT = async () => {
   response.value = ''
 
   try {
+    const gptData = `Last news: ${tradingStore.lastNews.join(', ')}\nLast prices: ${tradingStore.lastPrices.join(', ')}`
+    console.log(gptData)
     response.value = await gptService.getGPTResponse(gptData, userQuestion.value)
   } catch (err) {
     console.log(err)

@@ -14,7 +14,7 @@ class CryptoService extends BaseHttpService {
 
   async getCryptoPriceHistory(coinId: string): Promise<number[][]> {
     const { data } = await this.axiosInstance.get(
-      `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=1&interval=minute`,
+      `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=1`,
     )
     return data.prices
   }

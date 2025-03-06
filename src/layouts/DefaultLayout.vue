@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import Header from '@/components/Header.vue'
 import cryptoService from '@/services/crypto'
 import { useCryptoPricesStore } from '@/stores/crypto'
+import ApplicationHeader from '@/components/ApplicationHeader.vue'
 
 const cryptoPricesStore = useCryptoPricesStore()
 
@@ -28,7 +28,7 @@ onMounted(() => {
 
 <template>
   <div class="bg-gray-900 text-white">
-    <Header />
+    <ApplicationHeader />
     <RouterView />
   </div>
 </template>
