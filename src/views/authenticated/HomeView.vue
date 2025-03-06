@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import type { New } from '@/types/new'
 import type { Coin } from '@/types/coin'
+import { ref, watch, onMounted } from 'vue'
 import cryptoService from '@/services/crypto'
 import CryptoGPT from '@/components/CryptoGPT.vue'
 import CryptoList from '@/components/CryptoList.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
-import { useCryptoPricesStore, useCryptoTradingInfoStore } from '@/stores/crypto'
+import { useCryptoPricesStore } from '@/stores/crypto'
 
 // Handle screen loading and error messages
 const loading = ref(false)
@@ -16,28 +15,14 @@ const error = ref<string | null>(null)
 
 // Handle the crypto store
 const cryptoPricesStore = useCryptoPricesStore()
-const cryptoTradingInfoStore = useCryptoTradingInfoStore()
 
 // Handle the data for the chart, news and gpt
 const news = ref<New[] | null>(null)
 const priceHistory = ref<number[][] | null>(null)
-
-// Handle the selected coin
-const selectedCoin = ref<Coin | null>(null)
-
-const route = useRoute()
-
-watch(cryptoPricesStore.currentPrices, () => {
-  if (route.query.coin) {
-    const coin = cryptoPricesStore.currentPrices.find((coin) => coin.id === route.query.coin)
-    if (coin) {
-      selectedCoin.value = coin
-    }
-  }
-})
+const gptData = ref<string | null>(null)
 
 const selectCoin = (coin: Coin) => {
-  selectedCoin.value = coin
+  cryptoPricesStore.selectedCoin = coin
 }
 
 const loadTradingInfo = async (coin: Coin) => {
@@ -49,11 +34,13 @@ const loadTradingInfo = async (coin: Coin) => {
       cryptoService.getCryptoNews(coin.name),
     ])
 
-    priceHistory.value = priceHistoryResponse
     news.value = newsResponse
+    priceHistory.value = priceHistoryResponse
 
-    cryptoTradingInfoStore.lastPrices = priceHistoryResponse.map((entry) => entry[1])
-    cryptoTradingInfoStore.lastNews = newsResponse.map((article) => article.title)
+    const lastNewsTitle = newsResponse.map((article) => article.title)
+    const lastPricesData = priceHistoryResponse.map((entry) => entry[1])
+
+    gptData.value = `Last news: ${lastNewsTitle.join(', ')}\nLast prices: ${lastPricesData.join(', ')}`
     error.value = null
   } catch (err) {
     error.value = 'Failed to fetch data. Please try again.'
@@ -63,17 +50,26 @@ const loadTradingInfo = async (coin: Coin) => {
   }
 }
 
-// Watch the selected coin and fetch the data for the chart and news
-watch(selectedCoin, (newCoin) => {
-  if (newCoin) {
-    loadTradingInfo(newCoin)
+onMounted(() => {
+  if (cryptoPricesStore.selectedCoin) {
+    loadTradingInfo(cryptoPricesStore.selectedCoin)
   }
 })
 
+// Watch the selected coin and fetch the data for the chart and news
+watch(
+  () => cryptoPricesStore.selectedCoin,
+  (newCoin) => {
+    if (newCoin) {
+      loadTradingInfo(newCoin)
+    }
+  },
+)
+
 // Watch the crypto prices and fetch the data for the chart and news
 watch(cryptoPricesStore.currentPrices, (newPrices) => {
-  if (newPrices && selectedCoin.value) {
-    loadTradingInfo(selectedCoin.value)
+  if (newPrices && cryptoPricesStore.selectedCoin) {
+    loadTradingInfo(cryptoPricesStore.selectedCoin)
   }
 })
 </script>
@@ -94,11 +90,11 @@ watch(cryptoPricesStore.currentPrices, (newPrices) => {
   <div class="flex flex-col p-10 justify-center gap-2 md:flex-row">
     <CryptoList :coins="cryptoPricesStore.currentPrices" :selectCoin="selectCoin" />
 
-    <div v-if="selectedCoin" class="flex flex-col gap-4">
+    <div v-if="cryptoPricesStore.selectedCoin" class="flex flex-col gap-4">
       <CryptoChart v-if="priceHistory" :data="priceHistory" />
       <CryptoNews v-if="news" :news="news" />
     </div>
 
-    <CryptoGPT v-if="selectedCoin && priceHistory && news" />
+    <CryptoGPT :data="gptData" v-if="gptData" />
   </div>
 </template>

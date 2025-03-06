@@ -7,13 +7,7 @@ export const useCryptoPricesStore = defineStore('prices', () => {
   const loading = ref<boolean>(false)
   const currentPrices = ref<Coin[]>([])
   const lastUpdated = ref<string>('')
+  const selectedCoin = ref<Coin | null>(null)
 
-  return { currentPrices, lastUpdated, error, loading }
-})
-
-export const useCryptoTradingInfoStore = defineStore('trading', () => {
-  const lastNews = ref<string[]>([])
-  const lastPrices = ref<number[]>([])
-
-  return { lastNews, lastPrices }
+  return { currentPrices, lastUpdated, error, loading, selectedCoin }
 })

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { RouterView } from 'vue-router'
 import cryptoService from '@/services/crypto'
 import { useCryptoPricesStore } from '@/stores/crypto'
 import ApplicationHeader from '@/components/ApplicationHeader.vue'
@@ -22,13 +21,13 @@ const fetchCryptoPricesToday = async () => {
 
 onMounted(() => {
   fetchCryptoPricesToday()
-  setInterval(fetchCryptoPricesToday, 3600000) // Fetch every 1 minute
+  setInterval(fetchCryptoPricesToday, 3600000) // Fetch every 1 hour
 })
 </script>
 
 <template>
   <div class="bg-gray-900 text-white">
     <ApplicationHeader />
-    <RouterView />
+    <router-view />
   </div>
 </template>

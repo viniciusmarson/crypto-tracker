@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import gptService from '@/services/gpt'
-import { useCryptoTradingInfoStore } from '@/stores/crypto'
+
+const { data } = defineProps<{
+  data: string
+}>()
 
 const userQuestion = ref('')
 const response = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
-
-const tradingStore = useCryptoTradingInfoStore()
 
 const askGPT = async () => {
   if (!userQuestion.value.trim()) {
@@ -21,9 +22,8 @@ const askGPT = async () => {
   response.value = ''
 
   try {
-    const gptData = `Last news: ${tradingStore.lastNews.join(', ')}\nLast prices: ${tradingStore.lastPrices.join(', ')}`
-    console.log(gptData)
-    response.value = await gptService.getGPTResponse(gptData, userQuestion.value)
+    console.log(data)
+    response.value = await gptService.getGPTResponse(data, userQuestion.value)
   } catch (err) {
     console.log(err)
     error.value = 'Failed to get a response. Please try again.'
