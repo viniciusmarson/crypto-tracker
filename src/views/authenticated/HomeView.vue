@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { New } from '@/types/new'
+import gptService from '@/services/gpt'
 import type { Coin } from '@/types/coin'
 import { ref, watch, onMounted } from 'vue'
 import cryptoService from '@/services/crypto'
-import CryptoGPT from '@/components/CryptoGPT.vue'
+import CryptoChat from '@/components/CryptoChat.vue'
 import CryptoList from '@/components/CryptoList.vue'
 import CryptoNews from '@/components/CryptoNews.vue'
 import CryptoChart from '@/components/CryptoChart.vue'
@@ -72,6 +73,12 @@ watch(cryptoPricesStore.currentPrices, (newPrices) => {
     loadTradingInfo(cryptoPricesStore.selectedCoin)
   }
 })
+
+const askGPT = async (question: string) => {
+  if (!gptData.value) throw Error('No data available')
+  console.log(gptData.value)
+  return gptService.getGPTResponse(gptData.value, question)
+}
 </script>
 
 <template>
@@ -95,6 +102,6 @@ watch(cryptoPricesStore.currentPrices, (newPrices) => {
       <CryptoNews v-if="news" :news="news" />
     </div>
 
-    <CryptoGPT :data="gptData" v-if="gptData" />
+    <CryptoChat @askQuestion="askGPT" v-if="gptData" />
   </div>
 </template>
