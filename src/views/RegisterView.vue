@@ -9,30 +9,36 @@ if (localStorage.getItem('userToken')) {
   router.push('/')
 }
 
-// TODO: Alex - Add the rest of the fields
 const formData = ref({
+  name: '',
   email: '',
   password: '',
   confirmPassword: '',
+  address: '',
+  country: '',
+  phone: '',
+  currency: '',
+  age: '',
 })
 
 const handleSubmit = async () => {
   if (formData.value.password !== formData.value.confirmPassword) {
-    alert('Passwords not match!')
+    alert('Passwords do not match!')
+    return
   }
 
   try {
     await authService.register({
+      name: formData.value.name,
       email: formData.value.email,
       password: formData.value.password,
-      // TODO: get the rest of the fields from the user
-      name: '',
-      address: '',
-      country: '',
-      phone: '',
-      currency: '',
+      address: formData.value.address,
+      country: formData.value.country,
+      phone: formData.value.phone,
+      currency: formData.value.currency,
+      age: parseInt(formData.value.age, 10),
     })
-    return router.push('/login')
+    router.push('/login')
   } catch (error) {
     console.error(error)
     alert('Unexpected error')
@@ -102,7 +108,89 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        <!-- TODO: Alex - Add the rest of the fields -->
+        <div>
+          <label for="name" class="block text-sm/6 font-medium text-white">Name</label>
+          <div class="mt-2">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              v-model="formData.name"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="address" class="block text-sm/6 font-medium text-white">Address</label>
+          <div class="mt-2">
+            <input
+              type="text"
+              name="address"
+              id="address"
+              v-model="formData.address"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="country" class="block text-sm/6 font-medium text-white">Country</label>
+          <div class="mt-2">
+            <input
+              type="text"
+              name="country"
+              id="country"
+              v-model="formData.country"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm/6 font-medium text-white">Phone</label>
+          <div class="mt-2">
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              v-model="formData.phone"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="currency" class="block text-sm/6 font-medium text-white">Currency</label>
+          <div class="mt-2">
+            <input
+              type="text"
+              name="currency"
+              id="currency"
+              v-model="formData.currency"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="age" class="block text-sm/6 font-medium text-white">Age</label>
+          <div class="mt-2">
+            <input
+              type="number"
+              name="age"
+              id="age"
+              v-model="formData.age"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-600 sm:text-sm/6"
+              required
+            />
+          </div>
+        </div>
 
         <div>
           <button
