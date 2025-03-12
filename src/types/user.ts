@@ -6,4 +6,5 @@ export type User = {
   country: string
   phone: string
   currency: string
+  age: number;
 }
