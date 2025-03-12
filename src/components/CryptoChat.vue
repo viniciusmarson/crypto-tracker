@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import gptService from '@/services/gpt'
 
-const { data } = defineProps<{
-  data: string
+const emit = defineEmits<{
+  (e: 'askQuestion', question: string): Promise<string>
 }>()
 
 const userQuestion = ref('')
@@ -22,8 +21,7 @@ const askGPT = async () => {
   response.value = ''
 
   try {
-    console.log(data)
-    response.value = await gptService.getGPTResponse(data, userQuestion.value)
+    response.value = await emit('askQuestion', userQuestion.value)
   } catch (err) {
     console.log(err)
     error.value = 'Failed to get a response. Please try again.'
