@@ -1,60 +1,46 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+import type { User } from '@/types/user'
+
 defineProps({
-  email: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  country: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  currency: {
-    type: String,
-    required: true,
-  },
-  age: {
-    type: Number,
+  userInfo: {
+    type: Object as PropType<User>,
     required: true,
   },
 })
 </script>
-<!-- TODO: Alex - Display the rest of the fields -->
+
 <template>
   <div class="profile-container">
     <h2 class="profile-title">PROFILE INFORMATION</h2>
     <div class="profile-details">
-      
+      <div class="profile-item">
+        <span class="profile-label">Name:</span>
+        <span class="profile-value">{{ userInfo.name }}</span>
+      </div>
       <div class="profile-item">
         <span class="profile-label">Email:</span>
-        <span class="profile-value">{{ email }}</span>
+        <span class="profile-value">{{ userInfo.email }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Address:</span>
-        <span class="profile-value">{{ address }}</span>
+        <span class="profile-value">{{ userInfo.address }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Country:</span>
-        <span class="profile-value">{{ country }}</span>
+        <span class="profile-value">{{ userInfo.country }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Phone:</span>
-        <span class="profile-value">{{ phone }}</span>
+        <span class="profile-value">{{ userInfo.phone }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Currency:</span>
-        <span class="profile-value">{{ currency }}</span>
+        <span class="profile-value">{{ userInfo.currency }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Age:</span>
-        <span class="profile-value">{{ age }}</span>
+        <span class="profile-value">{{ userInfo.age }}</span>
       </div>
     </div>
   </div>
