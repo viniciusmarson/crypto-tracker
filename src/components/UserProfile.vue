@@ -4,6 +4,19 @@ import type { PropType } from 'vue'
 import type { User } from '@/types/user'
 import { authService } from '@/services/auth'
 
+const getInitialFormState = () => {
+  return {
+    name: false,
+    address: false,
+    country: false,
+    phone: false,
+    currency: false,
+    age: false,
+  }
+}
+
+const editableFields = ref(getInitialFormState())
+
 const props = defineProps({
   userInfo: {
     type: Object as PropType<User>,
@@ -14,32 +27,27 @@ const props = defineProps({
 const formData = ref({ ...props.userInfo })
 const hasChanges = ref(false)
 
-
 const handleSubmit = () => {
   authService.updateUserInfo(formData.value)
   alert('Profile updated successfully!')
   hasChanges.value = false
+  editableFields.value = getInitialFormState()
 }
 
 const currencies = ['Euro', 'Dollar', 'Pound', 'Yen', 'Rupee']
-
-const editableFields = ref({
-  name: false,
-  address: false,
-  country: false,
-  phone: false,
-  currency: false,
-  age: false,
-})
 
 const toggleEditable = (field: keyof typeof editableFields.value) => {
   editableFields.value[field] = !editableFields.value[field]
 }
 
 // Watch for changes in formData to set hasChanges to true
-watch(formData, () => {
-  hasChanges.value = true
-}, { deep: true })
+watch(
+  formData,
+  () => {
+    hasChanges.value = true
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -47,25 +55,45 @@ watch(formData, () => {
     <h2 class="profile-title">Profile Information</h2>
     <form @submit.prevent="handleSubmit" class="profile-details">
       <div class="profile-item">
+        <label class="profile-label" for="email">Email:</label>
+        <div class="input-container">
+          <input
+            id="email"
+            v-model="formData.email"
+            disabled
+            class="w-full rounded-md profile-value email-field"
+            required
+          />
+          <span class="lock-icon">&#x1F512;</span>
+        </div>
+      </div>
+
+      <div class="profile-item">
         <label class="profile-label" for="name">Name:</label>
         <div class="input-container">
-          <input id="name" v-model="formData.name" :readonly="!editableFields.name" class="profile-value" />
+          <input
+            id="name"
+            v-model="formData.name"
+            :disabled="!editableFields.name"
+            class="w-full rounded-md profile-value"
+            required
+          />
           <button type="button" @click="toggleEditable('name')" class="edit-button">
             {{ editableFields.name ? 'Lock' : 'Edit' }}
           </button>
         </div>
       </div>
+
       <div class="profile-item">
-  <label class="profile-label" for="email">Email:</label>
-  <div class="input-container">
-    <input id="email" v-model="formData.email" readonly class="profile-value email-field" />
-    <span class="lock-icon">&#x1F512;</span>
-  </div>
-</div>
-      <div class="profile-item">
-        <label class="profile-label" for="address">Address:</label>
+        <label class="w-full rounded-md profile-label" for="address">Address:</label>
         <div class="input-container">
-          <input id="address" v-model="formData.address" :readonly="!editableFields.address" class="profile-value" />
+          <input
+            id="address"
+            v-model="formData.address"
+            :disabled="!editableFields.address"
+            class="w-full rounded-md profile-value"
+            required
+          />
           <button type="button" @click="toggleEditable('address')" class="edit-button">
             {{ editableFields.address ? 'Lock' : 'Edit' }}
           </button>
@@ -74,7 +102,13 @@ watch(formData, () => {
       <div class="profile-item">
         <label class="profile-label" for="country">Country:</label>
         <div class="input-container">
-          <input id="country" v-model="formData.country" :readonly="!editableFields.country" class="profile-value" />
+          <input
+            id="country"
+            v-model="formData.country"
+            :disabled="!editableFields.country"
+            class="w-full rounded-md profile-value"
+            required
+          />
           <button type="button" @click="toggleEditable('country')" class="edit-button">
             {{ editableFields.country ? 'Lock' : 'Edit' }}
           </button>
@@ -83,7 +117,13 @@ watch(formData, () => {
       <div class="profile-item">
         <label class="profile-label" for="phone">Phone:</label>
         <div class="input-container">
-          <input id="phone" v-model="formData.phone" :readonly="!editableFields.phone" class="profile-value" />
+          <input
+            id="phone"
+            v-model="formData.phone"
+            :disabled="!editableFields.phone"
+            class="w-full rounded-md profile-value"
+            required
+          />
           <button type="button" @click="toggleEditable('phone')" class="edit-button">
             {{ editableFields.phone ? 'Lock' : 'Edit' }}
           </button>
@@ -92,8 +132,16 @@ watch(formData, () => {
       <div class="profile-item">
         <label class="profile-label" for="currency">Currency:</label>
         <div class="input-container">
-          <select id="currency" v-model="formData.currency" :disabled="!editableFields.currency" class="profile-value">
-            <option v-for="currency in currencies" :key="currency" :value="currency">{{ currency }}</option>
+          <select
+            id="currency"
+            v-model="formData.currency"
+            :disabled="!editableFields.currency"
+            class="w-full rounded-md profile-value"
+            required
+          >
+            <option v-for="currency in currencies" :key="currency" :value="currency">
+              {{ currency }}
+            </option>
           </select>
           <button type="button" @click="toggleEditable('currency')" class="edit-button">
             {{ editableFields.currency ? 'Lock' : 'Edit' }}
@@ -103,26 +151,44 @@ watch(formData, () => {
       <div class="profile-item">
         <label class="profile-label" for="age">Age:</label>
         <div class="input-container">
-          <input id="age" type="number" v-model="formData.age" :readonly="!editableFields.age" class="profile-value" />
+          <input
+            id="age"
+            type="number"
+            v-model="formData.age"
+            :disabled="!editableFields.age"
+            class="w-full rounded-md profile-value"
+            required
+          />
           <button type="button" @click="toggleEditable('age')" class="edit-button">
             {{ editableFields.age ? 'Lock' : 'Edit' }}
           </button>
         </div>
       </div>
-      <button type="submit" :disabled="!hasChanges" :class="{ 'update-button': true, 'update-button-disabled': !hasChanges }">Update Profile</button>
+      <button
+        type="submit"
+        :disabled="!hasChanges"
+        :class="{ 'update-button': true, 'update-button-disabled': !hasChanges }"
+      >
+        Update Profile
+      </button>
     </form>
   </div>
 </template>
 
 <style scoped>
 .profile-container {
-  width: 30%;
-  margin: 0 auto;
+  min-width: 45%;
+  margin: 0 auto 20px;
   padding: 20px;
   background-color: #2d2d2d;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 150vh;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    min-width: 90%;
+  }
 }
 
 .profile-title {
@@ -173,18 +239,11 @@ watch(formData, () => {
   display: flex;
   align-items: center;
   position: relative;
-
 }
 
-
-
 .lock-icon {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateY(-50%);
+  margin-left: 10px;
   color: #bdc3c7;
-  cursor: pointer;
 }
 
 .toggle-password-button {
@@ -206,8 +265,8 @@ watch(formData, () => {
 .edit-button {
   margin-left: 10px;
   padding: 5px 10px;
-  background-color: #3498db;
-  color: #ffffff;
+  background-color: transparent;
+  color: #3498db;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -239,6 +298,4 @@ watch(formData, () => {
 .update-button:hover {
   background-color: #e1b30f;
 }
-
-
 </style>
