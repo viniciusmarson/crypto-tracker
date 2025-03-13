@@ -68,11 +68,14 @@ watch(
 )
 
 // Watch the crypto prices and fetch the data for the chart and news
-watch(cryptoPricesStore.currentPrices, (newPrices) => {
-  if (newPrices && cryptoPricesStore.selectedCoin) {
-    loadTradingInfo(cryptoPricesStore.selectedCoin)
-  }
-})
+watch(
+  () => cryptoPricesStore.currentPrices,
+  (newPrices) => {
+    if (newPrices && cryptoPricesStore.selectedCoin) {
+      loadTradingInfo(cryptoPricesStore.selectedCoin)
+    }
+  },
+)
 
 const askGPT = async (question: string) => {
   if (!gptData.value) throw Error('No data available')
