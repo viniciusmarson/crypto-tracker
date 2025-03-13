@@ -17,7 +17,7 @@ const updateUserCryptoData = () => {
   userCryptoData.value = walletService.getUserCryptoData(userId)
 }
 
-const updateCryptoPricesObject = () => {
+const updateCryptoPricesMap = () => {
   cryptoPricesMap.value.clear()
   for (const crypto of cryptoPricesStore.currentPrices) {
     cryptoPricesMap.value.set(crypto.id, crypto.current_price)
@@ -77,7 +77,7 @@ const addCrypto = (newCrypto: Crypto) => {
 }
 
 onMounted(() => {
-  updateCryptoPricesObject()
+  updateCryptoPricesMap()
   updateUserCryptoData()
   calculateTotalMarketValue()
   calculateTotalTransactionValue()
@@ -87,7 +87,7 @@ onMounted(() => {
 watch(
   () => cryptoPricesStore.currentPrices,
   () => {
-    updateCryptoPricesObject()
+    updateCryptoPricesMap()
     calculateTotalMarketValue()
     calculateTotalTransactionValue()
     calculateTotalWallet()
@@ -97,116 +97,58 @@ watch(
 </script>
 
 <template>
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: white;
-      min-height: 100vh;
-      padding: 24px;
-      margin-top: 50px;
-    "
-  >
-    <div
-      style="
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        max-width: 1200px;
-        gap: 20px;
-      "
-    >
-      <div style="width: 100%; max-width: 450px">
+  <div class="wallet-container">
+    <div class="wallet-content">
+      <div class="wallet-form">
         <WalletForm :cryptoPricesStore="cryptoPricesStore" @crypto-added="addCrypto" />
       </div>
 
-      <div style="width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 20px">
-        <div
-          style="
-            background-color: black;
-            border-radius: 10px;
-            border: 1px solid gray;
-            text-align: center;
-            padding: 16px;
-          "
-        >
-          <p style="font-size: 20px; font-weight: bold">
-            Transaction Value: ${{ totalTransactionValue }}
-          </p>
-          <p style="font-size: 20px; font-weight: bold">
-            Total Market Value: ${{ totalMarketValue }}
-          </p>
-          <p :style="getTotalWalletColor()" style="font-size: 20px; font-weight: bold">
-            Total Wallet: ${{ totalWallet }}
-          </p>
+      <div class="wallet-details">
+        <div class="wallet-summary">
+          <p>Transaction Value: ${{ totalTransactionValue }}</p>
+          <p>Total Market Value: ${{ totalMarketValue }}</p>
+          <p :style="getTotalWalletColor()">Total Wallet: ${{ totalWallet }}</p>
         </div>
 
         <div>
-          <h2 class="text-lg mb-4">Transaction History</h2>
-          <table
-            style="
-              width: 100%;
-              border-collapse: collapse;
-              text-align: center;
-              background-color: black;
-            "
-          >
+          <h2 class="table-title">Transaction History</h2>
+          <table class="wallet-table">
             <thead>
-              <tr style="background-color: black; color: white">
-                <th style="padding: 8px">Cryptocurrency</th>
-                <th style="padding: 8px">Amount</th>
-                <th style="padding: 8px">Total (USD)</th>
-                <th style="padding: 8px">Date</th>
+              <tr>
+                <th>Cryptocurrency</th>
+                <th>Amount</th>
+                <th>Total (USD)</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="crypto in userCryptoData"
-                :key="crypto.id"
-                style="border-bottom: 1px solid gray"
-              >
-                <td style="padding: 8px">{{ crypto.name }} ({{ crypto.symbol }})</td>
-                <td style="padding: 8px">{{ crypto.amount }}</td>
-                <td style="padding: 8px">${{ (crypto.amount * crypto.price).toFixed(2) }}</td>
-                <td style="padding: 8px">{{ crypto.date }}</td>
+              <tr v-for="crypto in userCryptoData" :key="crypto.id">
+                <td>{{ crypto.name }} ({{ crypto.symbol }})</td>
+                <td>{{ crypto.amount }}</td>
+                <td>${{ (crypto.amount * crypto.price).toFixed(2) }}</td>
+                <td>{{ crypto.date }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div>
-          <h2 class="text-lg mb-4">Current Value</h2>
-          <table
-            style="
-              width: 100%;
-              border-collapse: collapse;
-              text-align: center;
-              background-color: black;
-            "
-          >
+          <h2 class="table-title">Current Value</h2>
+          <table class="wallet-table">
             <thead>
-              <tr style="background-color: black; color: white">
-                <th style="padding: 8px">Cryptocoin</th>
-                <th style="padding: 8px">Updated</th>
-                <th style="padding: 8px">Change (%)</th>
-                <th style="padding: 8px">Price (USD)</th>
+              <tr>
+                <th>Cryptocoin</th>
+                <th>Updated</th>
+                <th>Change (%)</th>
+                <th>Price (USD)</th>
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="crypto in userCryptoData"
-                :key="crypto.id"
-                style="border-bottom: 1px solid gray"
-              >
-                <td style="padding: 8px">{{ crypto.name }} ({{ crypto.symbol }})</td>
-                <td style="padding: 8px">{{ cryptoPricesStore.lastUpdated }}</td>
-                <td :style="getChangeColor(crypto)" style="padding: 8px">
-                  {{ calculatePriceChange(crypto).toFixed(2) }}%
-                </td>
-                <td style="padding: 8px">${{ getCurrentPrice(crypto.id).toFixed(2) }}</td>
+              <tr v-for="crypto in userCryptoData" :key="crypto.id">
+                <td>{{ crypto.name }} ({{ crypto.symbol }})</td>
+                <td>{{ cryptoPricesStore.lastUpdated }}</td>
+                <td :style="getChangeColor(crypto)">{{ calculatePriceChange(crypto).toFixed(2) }}%</td>
+                <td>${{ getCurrentPrice(crypto.id).toFixed(2) }}</td>
               </tr>
             </tbody>
           </table>
@@ -216,4 +158,72 @@ watch(
   </div>
 </template>
 
-<style></style>
+<style>
+  .wallet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    min-height: 100vh;
+    padding: 24px;
+    margin-top: 50px;
+  }
+
+  .wallet-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    gap: 20px;
+  }
+
+  .wallet-form {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .wallet-details {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .wallet-summary {
+    background-color: black;
+    border-radius: 10px;
+    border: 1px solid gray;
+    text-align: center;
+    padding: 16px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .wallet-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: black;
+  }
+
+  .wallet-table thead tr {
+    background-color: black;
+    color: white;
+  }
+
+  .wallet-table th, .wallet-table td {
+    padding: 8px;
+  }
+
+  .wallet-table tbody tr {
+    border-bottom: 1px solid gray;
+  }
+
+  .table-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+</style>

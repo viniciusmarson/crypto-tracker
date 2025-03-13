@@ -1,91 +1,26 @@
 <template>
-  <div style="width: 100%; max-width: 450px">
+  <div class="wallet-form-container">
     <h1 class="text-3xl font-bold mb-4">Wallet</h1>
     <h2 class="text-lg mb-6">Add a new crypto</h2>
 
-    <form
-      @submit.prevent="submitCrypto"
-      style="background-color: black; border-radius: 10px; border: 1px solid gray; padding: 16px"
-    >
-      <label class="block mb-2 font-semibold">Select cryptocurrency:</label>
-      <select
-        v-model="newCrypto.id"
-        required
-        style="
-          width: 100%;
-          padding: 8px;
-          background: dimgrey;
-          color: white;
-          border: 1px solid gray;
-          border-radius: 5px;
-          margin-bottom: 16px;
-        "
-      >
-        <option
-          v-for="crypto in cryptoPricesStore.currentPrices"
-          :key="crypto.id"
-          :value="crypto.id"
-        >
+    <form @submit.prevent="submitCrypto" class="wallet-form">
+      <label class="form-label">Select cryptocurrency:</label>
+      <select v-model="newCrypto.id" required class="form-input">
+        <option v-for="crypto in cryptoPricesStore.currentPrices" :key="crypto.id" :value="crypto.id">
           {{ crypto.name }} ({{ crypto.symbol }})
         </option>
       </select>
 
-      <label class="block mb-2 font-semibold">Amount:</label>
-      <input
-        type="number"
-        v-model="newCrypto.amount"
-        min="0.01"
-        step="0.01"
-        required
-        style="
-          width: 100%;
-          padding: 8px;
-          background: dimgrey;
-          color: white;
-          border: 1px solid gray;
-          border-radius: 5px;
-          margin-bottom: 16px;
-        "
-      />
+      <label class="form-label">Amount:</label>
+      <input type="number" v-model="newCrypto.amount" min="0.01" step="0.01" required class="form-input" />
 
-      <label class="block mb-2 font-semibold">Purchase price:</label>
-      <input
-        type="number"
-        v-model="newCrypto.price"
-        min="0.01"
-        step="0.01"
-        required
-        style="
-          width: 100%;
-          padding: 8px;
-          background: dimgrey;
-          color: white;
-          border: 1px solid gray;
-          border-radius: 5px;
-          margin-bottom: 16px;
-        "
-      />
+      <label class="form-label">Purchase price:</label>
+      <input type="number" v-model="newCrypto.price" min="0.01" step="0.01" required class="form-input" />
 
-      <label class="block mb-2 font-semibold">Notes:</label>
-      <textarea
-        v-model="newCrypto.notes"
-        style="
-          width: 100%;
-          padding: 8px;
-          background: dimgrey;
-          color: white;
-          border: 1px solid gray;
-          border-radius: 5px;
-          resize: none;
-        "
-        class="mb-4"
-      ></textarea>
+      <label class="form-label">Notes:</label>
+      <textarea v-model="newCrypto.notes" class="form-textarea"></textarea>
 
-      <button
-        class="w-full mt-2 p-3 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400"
-      >
-        Add
-      </button>
+      <button class="form-button">Add</button>
     </form>
   </div>
 </template>
@@ -130,4 +65,58 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+  .wallet-form-container {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .wallet-form {
+    background-color: black;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 16px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 8px;
+    background: dimgrey;
+    color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-bottom: 16px;
+  }
+
+  .form-textarea {
+    width: 100%;
+    padding: 8px;
+    background: dimgrey;
+    color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    resize: none;
+    margin-bottom: 16px;
+  }
+
+  .form-button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #facc15;
+    color: black;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .form-button:hover {
+    background-color: #fcd34d;
+  }
+</style>
