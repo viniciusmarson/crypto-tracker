@@ -1,20 +1,229 @@
 <script setup lang="ts">
-// TODO: Mario - Call the cryptoPricesStore to retrieve the crypto data (take a look at the HomeView.vue for the example)
-// TODO: Mario - Create the logic to retrieve the user crypto data from the local storage
-// TODO: Mario - Create a logic to save the user crypto data to the local storage
-// TODO: Mario - Create a logic to calculate the total value of the user crypto data based on the current price of the crypto and the price of the crypto when the user added it to the wallet
+import { ref, onMounted, watch } from 'vue'
+import type { Crypto } from '@/types/crypto'
+import WalletForm from '@/components/WalletForm.vue'
+import { walletService } from '@/services/wallet'
+import { useCryptoPricesStore } from '@/stores/crypto'
+
+const cryptoPricesStore = useCryptoPricesStore()
+const userId = 'user'
+const userCryptoData = ref<Crypto[]>([])
+const totalMarketValue = ref(0)
+const totalTransactionValue = ref(0)
+const totalWallet = ref(0)
+const cryptoPricesMap = ref<Map<string, number>>(new Map())
+
+const updateUserCryptoData = () => {
+  userCryptoData.value = walletService.getUserCryptoData(userId)
+}
+
+const updateCryptoPricesMap = () => {
+  cryptoPricesMap.value.clear()
+  for (const crypto of cryptoPricesStore.currentPrices) {
+    cryptoPricesMap.value.set(crypto.id, crypto.current_price)
+  }
+}
+
+const calculateTotalTransactionValue = () => {
+  let total = 0
+  for (const userCrypto of userCryptoData.value) {
+    total += userCrypto.amount * userCrypto.price
+  }
+  totalTransactionValue.value = total
+}
+
+const calculateTotalMarketValue = () => {
+  let total = 0
+  for (const userCrypto of userCryptoData.value) {
+    const currentPrice = cryptoPricesMap.value.get(userCrypto.id)
+    if (currentPrice) {
+      total += userCrypto.amount * currentPrice
+    }
+  }
+  totalMarketValue.value = total
+}
+
+const calculateTotalWallet = () => {
+  totalWallet.value = totalMarketValue.value - totalTransactionValue.value
+}
+
+const getCurrentPrice = (cryptoId: string): number => {
+  return cryptoPricesMap.value.get(cryptoId) || 0
+}
+
+const calculatePriceChange = (crypto: Crypto): number => {
+  const currentPrice = getCurrentPrice(crypto.id)
+  if (currentPrice === 0) return currentPrice
+
+  const change = ((currentPrice - crypto.price) / crypto.price) * 100
+  return change
+}
+
+const getChangeColor = (crypto: Crypto) => {
+  const price = calculatePriceChange(crypto)
+  return price >= 0 ? 'color: green;' : 'color: red;'
+}
+
+const getTotalWalletColor = () => {
+  return totalWallet.value >= 0 ? 'color: green;' : 'color: red;'
+}
+
+const addCrypto = (newCrypto: Crypto) => {
+  userCryptoData.value.push(newCrypto)
+  walletService.saveUserCryptoData(userId, userCryptoData.value)
+  calculateTotalMarketValue()
+  calculateTotalTransactionValue()
+  calculateTotalWallet()
+}
+
+onMounted(() => {
+  updateCryptoPricesMap()
+  updateUserCryptoData()
+  calculateTotalMarketValue()
+  calculateTotalTransactionValue()
+  calculateTotalWallet()
+})
+
+watch(
+  () => cryptoPricesStore.currentPrices,
+  () => {
+    updateCryptoPricesMap()
+    calculateTotalMarketValue()
+    calculateTotalTransactionValue()
+    calculateTotalWallet()
+    updateUserCryptoData()
+  },
+)
 </script>
 
 <template>
-  <div>
-    <h1>Wallet</h1>
+  <div class="wallet-container">
+    <div class="wallet-content">
+      <div class="wallet-form">
+        <WalletForm :cryptoPricesStore="cryptoPricesStore" @crypto-added="addCrypto" />
+      </div>
 
-    <!-- TODO: Mario - Add a form for the user to add a new crypto -->
-    <!-- The user should be able to select the crypto from a dropdown -->
-    <!-- The user should be able to add the amount of the crypto -->
-    <!-- The user should be able to add the price of the crypto -->
-    <!-- The user should be able to add the notes of the crypto -->
+      <div class="wallet-details">
+        <div class="wallet-summary">
+          <p>Transaction Value: ${{ totalTransactionValue }}</p>
+          <p>Total Market Value: ${{ totalMarketValue }}</p>
+          <p :style="getTotalWalletColor()">Total Wallet: ${{ totalWallet }}</p>
+        </div>
 
-    <!-- TODO: Mario - Display the user crypto data -->
+        <div>
+          <h2 class="table-title">Transaction History</h2>
+          <table class="wallet-table">
+            <thead>
+              <tr>
+                <th>Cryptocurrency</th>
+                <th>Amount</th>
+                <th>Total (USD)</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="crypto in userCryptoData" :key="crypto.id">
+                <td>{{ crypto.name }} ({{ crypto.symbol }})</td>
+                <td>{{ crypto.amount }}</td>
+                <td>${{ (crypto.amount * crypto.price).toFixed(2) }}</td>
+                <td>{{ crypto.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h2 class="table-title">Current Value</h2>
+          <table class="wallet-table">
+            <thead>
+              <tr>
+                <th>Cryptocoin</th>
+                <th>Updated</th>
+                <th>Change (%)</th>
+                <th>Price (USD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="crypto in userCryptoData" :key="crypto.id">
+                <td>{{ crypto.name }} ({{ crypto.symbol }})</td>
+                <td>{{ cryptoPricesStore.lastUpdated }}</td>
+                <td :style="getChangeColor(crypto)">{{ calculatePriceChange(crypto).toFixed(2) }}%</td>
+                <td>${{ getCurrentPrice(crypto.id).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<style>
+  .wallet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    min-height: 100vh;
+    padding: 24px;
+    margin-top: 50px;
+  }
+
+  .wallet-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    gap: 20px;
+  }
+
+  .wallet-form {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .wallet-details {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .wallet-summary {
+    background-color: black;
+    border-radius: 10px;
+    border: 1px solid gray;
+    text-align: center;
+    padding: 16px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .wallet-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: black;
+  }
+
+  .wallet-table thead tr {
+    background-color: black;
+    color: white;
+  }
+
+  .wallet-table th, .wallet-table td {
+    padding: 8px;
+  }
+
+  .wallet-table tbody tr {
+    border-bottom: 1px solid gray;
+  }
+
+  .table-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+</style>
