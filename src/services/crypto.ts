@@ -3,7 +3,7 @@ import type { Coin } from '@/types/coin'
 import { BaseHttpService } from './http'
 
 class CryptoService extends BaseHttpService {
-  private readonly API_KEY = 'pub_7098760315abb2ba18da32d1cdc3e694d2a31'
+  private readonly API_KEY = import.meta.env.VITE_CRYPTO_NEWS_API_KEY
 
   async getCryptoData(): Promise<Coin[]> {
     const { data } = await this.axiosInstance.get(
