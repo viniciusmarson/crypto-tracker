@@ -21,7 +21,7 @@ const formData = ref({
   age: '',
 })
 
-const currencies = ['Euro', 'Dollar', 'Pound', 'Yen', 'Rupee']
+const currencies = ['USD', 'CAD', 'REAL', 'EUR']
 
 const handleSubmit = async () => {
   if (formData.value.password !== formData.value.confirmPassword) {

@@ -34,7 +34,7 @@ const handleSubmit = () => {
   editableFields.value = getInitialFormState()
 }
 
-const currencies = ['Euro', 'Dollar', 'Pound', 'Yen', 'Rupee']
+const currencies = ['USD', 'CAD', 'REAL', 'EUR']
 
 const toggleEditable = (field: keyof typeof editableFields.value) => {
   editableFields.value[field] = !editableFields.value[field]
