@@ -179,8 +179,8 @@ watch(
 .profile-container {
   min-width: 45%;
   margin: 0 auto 20px;
-  padding: 20px;
-  background-color: #2d2d2d;
+  padding: 50px;
+  background-color: #090f1b;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

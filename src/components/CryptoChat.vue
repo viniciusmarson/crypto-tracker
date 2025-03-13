@@ -1,41 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type PropType } from 'vue'
+
+const { response, loading, error } = defineProps({
+  response: {
+    type: String as PropType<string>,
+    required: false,
+  },
+  loading: {
+    type: Boolean as PropType<boolean>,
+    required: false,
+  },
+  error: {
+    type: String as PropType<string | null>,
+    required: false,
+  },
+})
 
 const emit = defineEmits<{
   (e: 'askQuestion', question: string): Promise<string>
 }>()
 
 const userQuestion = ref('')
-const response = ref('')
-const loading = ref(false)
-const error = ref<string | null>(null)
 
 const askGPT = async () => {
-  if (!userQuestion.value.trim()) {
-    error.value = 'Please enter a question.'
-    return
-  }
-
-  loading.value = true
-  error.value = null
-  response.value = ''
-
-  try {
-    const chatResponse = await emit('askQuestion', userQuestion.value)
-    console.log(chatResponse)
-    response.value = chatResponse
-  } catch (err) {
-    console.log(err)
-    error.value = 'Failed to get a response. Please try again.'
-  } finally {
-    loading.value = false
-  }
+  emit('askQuestion', userQuestion.value)
 }
 </script>
 
 <template>
-  <div class="p-6">
-    <h2 class="text-xl font-bold text-center mb-4">Ask GPT About This Data</h2>
+  <div class="p-6 max-w-2xl mx-auto">
+    <h2 class="text-xl font-bold text-center mb-4">Ask AI About This Data</h2>
 
     <textarea
       v-model="userQuestion"
@@ -45,16 +39,16 @@ const askGPT = async () => {
 
     <button
       @click="askGPT"
-      :disabled="loading"
+      :disabled="loading || !userQuestion"
       class="w-full mt-4 p-3 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition"
     >
-      {{ loading ? 'Thinking...' : 'Ask GPT' }}
+      {{ loading ? 'Thinking...' : 'Ask our AI' }}
     </button>
 
     <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
 
     <div v-if="response" class="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
-      <h3 class="font-semibold text-yellow-400">GPT Response:</h3>
+      <h3 class="font-semibold text-yellow-400">AI Response:</h3>
       <p class="mt-2">{{ response }}</p>
     </div>
   </div>

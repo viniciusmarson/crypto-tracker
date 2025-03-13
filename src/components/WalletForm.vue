@@ -6,16 +6,34 @@
     <form @submit.prevent="submitCrypto" class="wallet-form">
       <label class="form-label">Select cryptocurrency:</label>
       <select v-model="newCrypto.id" required class="form-input">
-        <option v-for="crypto in cryptoPricesStore.currentPrices" :key="crypto.id" :value="crypto.id">
+        <option
+          v-for="crypto in cryptoPricesStore.currentPrices"
+          :key="crypto.id"
+          :value="crypto.id"
+        >
           {{ crypto.name }} ({{ crypto.symbol }})
         </option>
       </select>
 
       <label class="form-label">Amount:</label>
-      <input type="number" v-model="newCrypto.amount" min="0.01" step="0.01" required class="form-input" />
+      <input
+        type="number"
+        v-model="newCrypto.amount"
+        min="0.01"
+        step="0.01"
+        required
+        class="form-input"
+      />
 
       <label class="form-label">Purchase price:</label>
-      <input type="number" v-model="newCrypto.price" min="0.01" step="0.01" required class="form-input" />
+      <input
+        type="number"
+        v-model="newCrypto.price"
+        min="0.01"
+        step="0.01"
+        required
+        class="form-input"
+      />
 
       <label class="form-label">Notes:</label>
       <textarea v-model="newCrypto.notes" class="form-textarea"></textarea>
@@ -66,57 +84,57 @@ export default {
 </script>
 
 <style>
-  .wallet-form-container {
-    width: 100%;
-    max-width: 450px;
-  }
+.wallet-form-container {
+  width: 100%;
+  max-width: 450px;
+}
 
-  .wallet-form {
-    background-color: black;
-    border-radius: 10px;
-    border: 1px solid gray;
-    padding: 16px;
-  }
+.wallet-form {
+  background-color: #090f1b;
+  border-radius: 10px;
+  border: 1px solid gray;
+  padding: 16px;
+}
 
-  .form-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
 
-  .form-input {
-    width: 100%;
-    padding: 8px;
-    background: dimgrey;
-    color: white;
-    border: 1px solid gray;
-    border-radius: 5px;
-    margin-bottom: 16px;
-  }
+.form-input {
+  width: 100%;
+  padding: 8px;
+  background: dimgrey;
+  color: white;
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin-bottom: 16px;
+}
 
-  .form-textarea {
-    width: 100%;
-    padding: 8px;
-    background: dimgrey;
-    color: white;
-    border: 1px solid gray;
-    border-radius: 5px;
-    resize: none;
-    margin-bottom: 16px;
-  }
+.form-textarea {
+  width: 100%;
+  padding: 8px;
+  background: dimgrey;
+  color: white;
+  border: 1px solid gray;
+  border-radius: 5px;
+  resize: none;
+  margin-bottom: 16px;
+}
 
-  .form-button {
-    width: 100%;
-    margin-top: 8px;
-    padding: 12px;
-    background-color: #facc15;
-    color: black;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+.form-button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #facc15;
+  color: black;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-  .form-button:hover {
-    background-color: #fcd34d;
-  }
+.form-button:hover {
+  background-color: #fcd34d;
+}
 </style>

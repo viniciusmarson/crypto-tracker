@@ -77,12 +77,23 @@ watch(
   },
 )
 
+const gptResponse = ref<string>()
+const gptLoading = ref<boolean>(false)
+const gptError = ref<string | null>(null)
+
 const askGPT = async (question: string) => {
-  if (!gptData.value) throw Error('No data available')
-  console.log(gptData.value)
-  const gptResponse = await gptService.getGPTResponse('', question)
-  console.log(gptResponse)
-  return gptResponse
+  gptLoading.value = true
+  gptError.value = null
+
+  try {
+    if (!gptData.value) throw Error('No data available')
+    gptResponse.value = await gptService.getGPTResponse(gptData.value, question)
+  } catch (err) {
+    gptError.value = 'Failed to get a response. Please try again.'
+    console.error('Error fetching cryptocurrency prices:', err)
+  } finally {
+    gptLoading.value = false
+  }
 }
 </script>
 
@@ -107,6 +118,12 @@ const askGPT = async (question: string) => {
       <CryptoNews v-if="news" :news="news" />
     </div>
 
-    <CryptoChat @askQuestion="askGPT" v-if="gptData" />
+    <CryptoChat
+      @askQuestion="askGPT"
+      :response="gptResponse"
+      :loading="gptLoading"
+      :error="gptError"
+      v-if="gptData"
+    />
   </div>
 </template>
