@@ -118,14 +118,14 @@ export default {
 
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; color: white; min-height: 100vh; padding: 24px; margin-top: 50px;">
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; max-width: 1200px; gap: 20px;">
 
-    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%; max-width: 1200px; gap: 20px;">
-
-      <div style="width: 40%; max-width: 450px;">
+      <div style="width: 100%; max-width: 450px;">
         <WalletForm :cryptoPricesStore="cryptoPricesStore" @crypto-added="addCrypto" />
       </div>
 
-      <div style="width: 55%; display: flex; flex-direction: column; gap: 20px;">
+      <div style="width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 20px;">
         <div style="background-color: black; border-radius: 10px; border: 1px solid gray; text-align: center; padding: 16px;">
           <p style="font-size: 20px; font-weight: bold;">Invested: ${{ totalTransactionValue }}</p>
           <p style="font-size: 20px; font-weight: bold;">Current: ${{ totalMarketValue }}</p>
@@ -134,7 +134,7 @@ export default {
 
         <div>
           <h2 class="text-lg mb-4">Transaction History</h2>
-          <table style="width: 100%; border-collapse: collapse; text-align: center; background-color: darkslategray;">
+          <table style="width: 100%; border-collapse: collapse; text-align: center; background-color: black;">
             <thead>
               <tr style="background-color: black; color: white;">
                 <th style="padding: 8px;">Cryptocurrency</th>
@@ -156,7 +156,7 @@ export default {
 
         <div>
           <h2 class="text-lg mb-4">Current Value</h2>
-          <table style="width: 100%; border-collapse: collapse; text-align: center; background-color: darkslategray;">
+          <table style="width: 100%; border-collapse: collapse; text-align: center; background-color: black;">
             <thead>
               <tr style="background-color: black; color: white;">
                 <th style="padding: 8px;">Cryptocoin</th>
