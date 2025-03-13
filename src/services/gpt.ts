@@ -7,7 +7,7 @@ class GPTService extends BaseHttpService {
     const response = await this.axiosInstance.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are an AI assistant helping with data analysis.' },
           {

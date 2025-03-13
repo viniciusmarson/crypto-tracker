@@ -77,7 +77,9 @@ watch(cryptoPricesStore.currentPrices, (newPrices) => {
 const askGPT = async (question: string) => {
   if (!gptData.value) throw Error('No data available')
   console.log(gptData.value)
-  return gptService.getGPTResponse(gptData.value, question)
+  const gptResponse = await gptService.getGPTResponse('', question)
+  console.log(gptResponse)
+  return gptResponse
 }
 </script>
 

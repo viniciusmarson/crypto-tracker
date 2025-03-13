@@ -21,7 +21,9 @@ const askGPT = async () => {
   response.value = ''
 
   try {
-    response.value = await emit('askQuestion', userQuestion.value)
+    const chatResponse = await emit('askQuestion', userQuestion.value)
+    console.log(chatResponse)
+    response.value = chatResponse
   } catch (err) {
     console.log(err)
     error.value = 'Failed to get a response. Please try again.'
