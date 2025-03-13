@@ -28,7 +28,7 @@ const askGPT = async () => {
 </script>
 
 <template>
-  <div class="p-6 max-w-2xl mx-auto">
+  <div class="p-6 max-w-2xl">
     <h2 class="text-xl font-bold text-center mb-4">Ask AI About This Data</h2>
 
     <textarea
