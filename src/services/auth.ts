@@ -42,6 +42,18 @@ export class AuthService {
   public getUserInfo(): User {
     return JSON.parse(localStorage.getItem('userInfo') || '{}')
   }
+
+  public updateUserInfo(updatedUser: User): void {
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const userIndex = users.findIndex((user: User) => user.email === updatedUser.email)
+    if (userIndex === -1) {
+      throw new Error('User not found')
+    }
+
+    users[userIndex] = updatedUser
+    localStorage.setItem('users', JSON.stringify(users))
+    localStorage.setItem('userInfo', JSON.stringify(updatedUser))
+  }
 }
 
 export const authService = new AuthService()
